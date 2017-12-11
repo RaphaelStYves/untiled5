@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<AnchorPane  xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.keyBoard.ControllerKeyBoard">
+
+    <ScrollPane fx:id="keyBoardScrollPane" layoutX="5.0" layoutY="25.0" prefHeight="800.0" prefWidth="65.0">
+        <content>
+            <BorderPane fx:id="borderPaneKeyBoard"  />
+        </content></ScrollPane>
+
+</AnchorPane>

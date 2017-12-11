@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="sample.notes.ControllerNotesBoard"
+            >
+
+    <ScrollPane fx:id="mainScrollPane" layoutX="00.0"  layoutY="25.0"  prefHeight="800.0" prefWidth="1300.0">
+        <content>
+            <BorderPane fx:id="borderPaneNotes" />
+        </content></ScrollPane>
+
+</AnchorPane>
