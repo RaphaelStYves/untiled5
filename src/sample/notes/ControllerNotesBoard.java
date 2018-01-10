@@ -1,52 +1,55 @@
 package sample.notes;
 
 import javafx.fxml.FXML;
-import javafx.scene.CacheHint;
 import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import sample.chordFinder.ChordFinder;
-import sample.chordFinder.Pulse;
+import sample.chordFinder.Beat;
+import sample.chordFinder.PulseChord;
+import sample.model.EChord;
 import sample.model.Piece;
+import sample.model.Pulse;
 
 import java.util.List;
+import java.util.Map;
+
+import static sample.Main.*;
+
 
 public class ControllerNotesBoard {
 
     private Piece oldPiece;
     private Piece newPiece;
 
-    AnchorPane root = new AnchorPane();
-
-    //Dimension
-    public static final int NOTEWIDTH = 15;
-    public static final int NOTEHEIGHT = 15;
-    public static final int BEATHEIGHT = 15;
-
-    public static final int NBNOTE = 70;
+    Group group = new Group();
 
     @FXML
-    private ScrollPane mainScrollPane;
+    private Canvas canvas;
 
-    public ScrollPane getMainScrollPane() {
-        return mainScrollPane;
-    }
+    @FXML
+    private Pane pane;
+    private int[][] array;
 
     @FXML
     public void loadAllComponants(){
 
-        root.getChildren().addAll(createVerticalLine(),createHorizontalLine(),loadNotes(oldPiece,Color.RED, 0.35,1.20),loadNotes(newPiece,Color.GREEN, 1,1));
-        mainScrollPane.setContent(root);
+        loadNotes(oldPiece,Color.RED, 0.35,1.35);
+        loadNotes(newPiece,Color.GREEN, 1,1);
+        pane.getChildren().add(canvas);
 
 
     }
 
     public void initialize(){
-        mainScrollPane.setOnKeyPressed(event ->  {
+
+
+
+
+        group.setOnKeyPressed(event ->  {
             switch (event.getCode()) {
                 case J: {
                     showAlgo();
@@ -55,43 +58,44 @@ public class ControllerNotesBoard {
                 break;
             }
         });
+
+        createHorizontalLine();
+        createVerticalLine();
+
+
     }
 
     public void deleteAllComponants(){
 
-        root.getChildren().clear();
+        group.getChildren().clear();
 
     }
 
 
-    public Group loadNotes(Piece piece, Color color, double opacity,double bigger){
+    public void loadNotes(Piece piece, Color color, double opacity,double bigger){
 
-        Group group = new Group();
-        for (int i = 0; i < piece.notes.size(); i++) {
-            piece.notes.get(i).getCNote();
-            if (piece.notes.get(i).getOn()) {
-                Rectangle rectangle = new Rectangle(piece.notes.get(i).getPulse16()*NOTEWIDTH, (NBNOTE- notePlace(piece.notes.get(i).getCNote()))*NOTEHEIGHT, piece.notes.get(i).getLenght16()*NOTEWIDTH, NOTEHEIGHT*bigger);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
-                rectangle.setFill(color);
-                rectangle.setOpacity(opacity);
-                rectangle.setStroke(Color.BLACK);
-                rectangle.setArcWidth(8);
-                rectangle.setArcHeight(8);
-                rectangle.setCache(true); //upgrade performance
 
-//
-//                Text text = new Text();
-//                text.setText(Integer.toString(piece.notes.get(i).getPulse16()));
-//                text.setX(piece.notes.get(i).getPulse16()*NOTEWIDTH);
-//                text.setY((NBNOTE- notePlace(piece.notes.get(i).getCNote()))*NOTEHEIGHT);
+            for (int i = 0; i < piece.notes.size(); i++) {
 
-                group.getChildren().addAll(rectangle);
+                if (piece.notes.get(i).getOn() && (piece.notes.get(i).getPulse16()) < NBPULSEVISIBLE) {
 
+                    gc.setFill(color);
+                    gc.setGlobalAlpha(opacity);
+                    gc.setStroke(Color.BLACK);
+                    gc.strokeRoundRect(piece.notes.get(i).getPulse16() * NOTEWIDTH, (NBNOTE - notePlace(piece.notes.get(i).getCNote())) * NOTEHEIGHT, piece.notes.get(i).getLenght16() * NOTEWIDTH, NOTEHEIGHT * bigger, 10, 10);
+                    gc.fillRoundRect(piece.notes.get(i).getPulse16() * NOTEWIDTH, (NBNOTE - notePlace(piece.notes.get(i).getCNote())) * NOTEHEIGHT, piece.notes.get(i).getLenght16() * NOTEWIDTH, NOTEHEIGHT * bigger, 10, 10);
+
+                    gc.strokeText(Integer.toString(piece.notes.get(i).getPulse16()), piece.notes.get(i).getPulse16() * NOTEWIDTH, (NBNOTE - notePlace(piece.notes.get(i).getCNote())) * NOTEHEIGHT);
+
+
+                }
             }
         }
 
-        return group;
-    }
+
+
 
     private int notePlace (int cnote){
 
@@ -118,122 +122,124 @@ public class ControllerNotesBoard {
 
     }
 
-    private Group createVerticalLine() {
-        Group group = new Group();
+    private void createVerticalLine() {
 
-        for (int i = 0; i < oldPiece.getPieceLenght16(); i++) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
-            if (i%1 ==0){
+        for (int i = 0; i <= NBPULSEVISIBLE; i++) {
 
-                Rectangle line1 = new Rectangle(i* NOTEWIDTH, 0, 3, (NBNOTE  * NOTEHEIGHT));
-                line1.setFill(Color.BLUE);
-                line1.setOpacity(.20);
-                line1.setCache(true); //upgrade performance
+            if (i%2 ==0){
 
-
-                group.getChildren().add(line1);
+                gc.setFill(Color.BLUE);
+                gc.setGlobalAlpha(0.20);
+                 gc.fillRoundRect(i* NOTEWIDTH, 0, 3, ((NBNOTE+1)  * NOTEHEIGHT),10,10);
 
             }
 
             if (i%16 ==0){
 
-                Rectangle line16 = new Rectangle(i* NOTEWIDTH, 0, 3, (NBNOTE  * NOTEHEIGHT));
-                line16.setOpacity(.20);
-                line16.setCache(true); //upgrade performance
-                line16.setCacheHint(CacheHint.SPEED);//upgrade performance
+                gc.setFill(Color.BLUE);
+                gc.setGlobalAlpha(0.20);
+                gc.fillRoundRect(i* NOTEWIDTH, 0, 3, ((NBNOTE+1)  * NOTEHEIGHT),10,10);
 
-                group.getChildren().add(line16);
+
 
             }
 
         }
-        return group;
+
     }
 
-    public Group createHorizontalLine() {
+    public void createHorizontalLine() {
 
-        Group group = new Group();
-
-        int TXTAJUTY = 15;
-        int TXTAJUTX = 10;
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
             for (int i = 0; i <= NBNOTE; i++) {
 
-            Rectangle rect1 = new Rectangle(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * oldPiece.getPieceLenght16(), NOTEHEIGHT);
-            rect1.setCache(true); //upgrade performance
-
-            Text text = new Text(TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY, null);
-            text.setCache(true); //upgrade performance
-
-
-
             switch (i % 7) {
                 case 0:
-                    rect1.setFill(Color.BLUE);
-                    text.setText("C");
+
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                   // gc.strokeText("C", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
+
                     break;
 
                 case 1:
-                    rect1.setFill(Color.GRAY);
-                    text.setText("D");
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                    //gc.strokeText("D", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
 
                 case 2:
-                    rect1.setFill(Color.GRAY);
-                    text.setText("E");
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                   // gc.strokeText("E", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
                 case 3:
-                    rect1.setFill(Color.GRAY);
-                    text.setText("F");
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                   // gc.strokeText("F", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
 
                 case 4:
-                    rect1.setFill(Color.GRAY);
-                    text.setText("G");
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                   // gc.strokeText("G", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
 
                 case 5:
-                    rect1.setFill(Color.GRAY);
-                    text.setText("A");
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                   // gc.strokeText("A", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
 
                 case 6:
-                    rect1.setFill(Color.GRAY);
-                    text.setText("B");
+                    gc.setFill(Color.BLUE);
+                    gc.setGlobalAlpha(0.20);
+                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT,10,10);
+
+                    //gc.strokeText("B", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
 
             }
-            rect1.setOpacity(.20);
-            text.setFont(new Font("Helvetica", 9));
 
-            group.getChildren().addAll(rect1, text);
 
         }
-
-        return group;
-
     }
 
     public void showAlgo() {
 
-        Group group = new Group();
-
-        ChordFinder chordFinder = new ChordFinder(oldPiece);
-        chordFinder.loadPieceInOnesInArray();
-        chordFinder.findScoreOfAllPulseAndAllChords();
-        List<Pulse> pulses = chordFinder.scoreOfEachPulseOfAllChords;
-        Text text;
-        for (int i = 0; i < pulses.size(); i++) {
-            for (int j = 0; j < pulses.get(i).getScores().size(); j++) {
-                text = new Text(Double.toString(pulses.get(i).getScores().get(j)));
-                text.setX(i*NOTEWIDTH);
-                text.setY(i*NOTEHEIGHT);
-                text.setCache(true);
-                group.getChildren().add(text);
-            }
-        }
-
-        root.getChildren().add(group);
+//        Group group = new Group();
+//
+//        ChordFinder chordFinder = new ChordFinder(oldPiece);
+//        chordFinder.loadPieceInOnesInArray();
+//        chordFinder.findScoreOfAllPulseAndAllChords();
+//        List<Pulse> pulses = chordFinder.scoreOfEachPulseOfAllChords;
+//        Text text;
+//        for (int i = 0; i < pulses.size(); i++) {
+//            for (int j = 0; j < pulses.get(i).getScores().size(); j++) {
+//                text = new Text(Double.toString(pulses.get(i).getScores().get(j)));
+//                text.setX(i*NOTEWIDTH);
+//                text.setY(i*NOTEHEIGHT);
+//                text.setCache(true);
+//                group.getChildren().add(text);
+//            }
+//        }
+//
+//        root.getChildren().add(group);
 
 
     }
@@ -247,5 +253,77 @@ public class ControllerNotesBoard {
     public void setPiece(Piece oldPiece, Piece newPiece) {
         this.oldPiece = oldPiece;
         this.newPiece = newPiece;
+    }
+
+    public void setAloView(int[][] array) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        for (int i = 0; i < NBPULSEVISIBLE; i++) {
+
+            for (int j = 0; j < 12 ; j++) {
+
+                if(array[i][j] == 1){
+                    gc.setStroke(Color.BLACK);
+                    gc.strokeText(Integer.toString(array[i][j]), i * NOTEWIDTH, (12-notePlace(j)+3)* NOTEHEIGHT);
+                }
+            }
+        }
+    }
+
+
+    public void setAloViewPulseList(List<PulseChord> listPulse) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        for (int i = 0; i < NBPULSEVISIBLE; i++) {
+
+            if((i % 2) ==0){
+                for (int j = 0; j < listPulse.get(i).getScores().size() ; j++) {
+
+                    gc.setStroke(Color.BLACK);
+                    gc.strokeText(Double.toString(listPulse.get(i).getScores().get(j)), i * NOTEWIDTH, (50-j)* NOTEHEIGHT);
+
+                }
+            }
+
+
+        }
+    }
+
+
+    public void setChords(List<String> findChords) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        for (int i = 0; i < findChords.size(); i++) {
+
+
+                    gc.setStroke(Color.BLACK);
+                    gc.strokeText(findChords.get(i), i * NOTEWIDTH, 1* NOTEHEIGHT);
+
+                }
+
+
+
+        }
+
+    public void setbeat(Beat beat) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        for (int i = 0; i < NBPULSEVISIBLE; i++) {
+
+            if((i % 2) ==0){
+                for (int j = 0; j < beat.get(i).getScores().size() ; j++) {
+
+                    gc.setStroke(Color.BLACK);
+                    gc.strokeText(Double.toString(listPulse.get(i).getScores().get(j)), i * NOTEWIDTH, (50-j)* NOTEHEIGHT);
+
+                }
+            }
+
+        }
+
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 A pulse contain the
  */
 
-public class Pulse {
+public class PulseChord {
 
     private List<Double> scores;
 

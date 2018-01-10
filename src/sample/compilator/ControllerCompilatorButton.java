@@ -17,8 +17,7 @@ public class ControllerCompilatorButton  {
 
     private ControllerNotesBoard controllerNotes ;
 
-    @FXML
-    private Button compilatorButton;
+
 
     public void setPiece(Piece oldPiece, Piece newPiece) {
         this.oldPiece = oldPiece;
@@ -34,11 +33,11 @@ public class ControllerCompilatorButton  {
     @FXML
     private void initialize() {
 
-        compilatorButton.setOnMouseClicked(event -> {
-            addChordInPiece();
-            launchAlgo();
-            reprinteNotes();
-        });
+//        compilatorButton.setOnMouseClicked(event -> {
+//            addChordInPiece();
+//            launchAlgo();
+//            reprinteNotes();
+//        });
 
 
    }

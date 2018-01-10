@@ -1,28 +1,25 @@
 package sample.keyBoard;
 
 import javafx.fxml.FXML;
-import javafx.scene.Group;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
-import static sample.notes.ControllerNotesBoard.NBNOTE;
-import static sample.notes.ControllerNotesBoard.NOTEHEIGHT;
-import static sample.notes.ControllerNotesBoard.NOTEWIDTH;
+
+import static sample.Main.NBNOTE;
+import static sample.Main.NOTEHEIGHT;
+import static sample.Main.NOTEWIDTH;
+
 
 public class ControllerKeyBoard {
 
+
     @FXML
-    private ScrollPane keyBoardScrollPane;
+    private Canvas canvas;
 
-    public ScrollPane getKeyBoardScrollPane() {
-        return keyBoardScrollPane;
-    }
-
+    @FXML
+    private Pane root;
 
     @FXML
     private void initialize(){
@@ -32,94 +29,78 @@ public class ControllerKeyBoard {
     @FXML
     public void loadKeyBoard(){
 
-        AnchorPane root = new AnchorPane();
+        root.getChildren().addAll(createKeyNotes());
 
-        root.getChildren().addAll(createLineNotes());
-        keyBoardScrollPane.setContent(root);
-        keyBoardScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        keyBoardScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-        //Disable mouse action
-        keyBoardScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-            event.consume();
-        });
+        System.out.println();
 
     }
 
-    public Group createLineNotes() {
+    public Canvas createKeyNotes() {
 
-        Group group = new Group();
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
 
         int TXTAJUTY = 12;
         int TXTAJUTX = NOTEWIDTH*3;
-        int OFFTSET = -2;
+        int OFFTSET = 0;
 
         for (int i = 0; i <= NBNOTE; i++) {
 
-            Rectangle whiteNote = new Rectangle(0, ((NBNOTE - i) * NOTEHEIGHT)-OFFTSET, NOTEWIDTH * 4, NOTEHEIGHT);
-            whiteNote.setCache(true); //upgrade performance
+            gc.setFill(Color.WHITE);
+            gc.setStroke(Color.BLACK);
+            gc.strokeRoundRect(0, ((NBNOTE - i) * NOTEHEIGHT)-OFFTSET, NOTEWIDTH * 4, NOTEHEIGHT,10,10);
+            gc.fillRoundRect(0, ((NBNOTE - i) * NOTEHEIGHT)-OFFTSET, NOTEWIDTH * 4, NOTEHEIGHT,10,10);
 
-            Text text = new Text(TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET, null);
-            text.setCache(true); //upgrade performance
 
 
-            Rectangle blackNote;
             if( i % 7 != 2 && i % 7 != 6 ) {
-                blackNote = new Rectangle(0, (((NBNOTE - i) * NOTEHEIGHT - NOTEHEIGHT / 2))-OFFTSET, NOTEWIDTH * 2, NOTEHEIGHT);
-                blackNote.setFill(Color.BLACK);
-                blackNote.setCache(true); //upgrade performance
-
-            } else {
-                blackNote = new Rectangle(0, ((NBNOTE - i) * NOTEHEIGHT - NOTEHEIGHT / 2)-OFFTSET, NOTEWIDTH * 2, NOTEHEIGHT);
-                blackNote.setFill(Color.WHITE);
-                blackNote.setCache(true); //upgrade performance
+                gc.setFill(Color.BLACK);
+                gc.fillRoundRect(0, (((NBNOTE - i) * NOTEHEIGHT - NOTEHEIGHT / 2))-OFFTSET, NOTEWIDTH * 2, NOTEHEIGHT,10,10);
 
             }
 
             switch (i % 7) {
                 case 0:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("C");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("C", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
+
                     break;
 
                 case 1:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("D");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("D", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
                     break;
 
                 case 2:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("E");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("E", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
                     break;
                 case 3:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("F");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("F", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
                     break;
 
                 case 4:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("G");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("G", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
                     break;
 
                 case 5:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("A");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("A", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
                     break;
 
                 case 6:
-                    whiteNote.setFill(Color.WHITE);
-                    text.setText("B");
+                    gc.setFill(Color.WHITE);
+                    gc.strokeText("B", TXTAJUTX, ((NBNOTE - i) * NOTEHEIGHT + TXTAJUTY)-OFFTSET);
                     break;
 
             }
-            whiteNote.setStroke(Color.BLACK);
-            text.setFont(new Font("Helvetica", 9));
-
-            group.getChildren().addAll(whiteNote,blackNote, text);
 
         }
 
-        return group;
+        return canvas;
 
     }
 

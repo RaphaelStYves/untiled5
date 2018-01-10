@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.notes.ControllerNotesBoard">
+   <Pane fx:id="pane" prefHeight="900.0" prefWidth="960.0" />
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="sample.notes.ControllerNotesBoard"
-            >
-
-    <ScrollPane fx:id="mainScrollPane" layoutX="00.0"  layoutY="25.0"  prefHeight="800.0" prefWidth="1300.0">
-        <content>
-            <BorderPane fx:id="borderPaneNotes" />
-        </content></ScrollPane>
+            <Canvas fx:id="canvas" height="900" width="1920" />
 
 </AnchorPane>

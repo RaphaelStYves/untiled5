@@ -16,8 +16,8 @@ public class Piece {
     private String name = "noName";
     public List<Note> notes = new ArrayList<>();
     public ArrayList<Chord> chords = new ArrayList<>();
-    public HashMap<Integer, Pulse> pulses = new HashMap<>();
-    public HashMap<Integer, Tracknumber> trackNumbers = new HashMap<>();
+    public Map<Integer, Pulse> pulses = new HashMap<>();
+    public Map<Integer, Tracknumber> trackNumbers = new HashMap<>();
 
 
     private static final int NOTE_ON = 0x90;
