@@ -14,163 +14,99 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.DoubleStream;
 
-/**
-df
-
- */
-
 public class ChordFinder {
 
     private Piece piece;
 
-     Song bestBeatsForBestChordForAll32;
-
-    public List<PulseChord>  scoreOfEachPulseOfAllChords;
-
-    private  List<String> refTableNameChords;
+    private  List<EChord> refTableEChords;
     private List<List<Double>> refTableForceChords;
     private List<List<Integer>> refTableBeatsChords;
-    private Map<String, EChord> refTableNameToEchord;
+
+    public List<PulseChord>  scoreOfEachPulseOfAllChords = new ArrayList<>();;
 
     private int[][] pieceMOD12;
 
-    public  ChordFinder(Piece piece) {
+    public  ChordFinder(Piece piece) throws IOException {
         this.piece = piece;
-    }
-
-    public List<String> findChords() throws IOException {
-
-        //load Compare Data Tables to analyse Mod 12 piece.
-        loadCompareDataTables();
-
-        //Find the best combination all 50 chords and chordBeat.csv for each section of 32 16ime.
-        bestBeatsForBestChordForAll32 = new Song();
-        bestBeatsForBestChordForAll32= scoreOfAllBeatsAndItsBestsChordsforAllSong();
-
-        List<Integer> listOfIndexChords = new ArrayList<>();
-        listOfIndexChords = findListOfIndexChords(listOfIndexChords);
-
-        List<String> listOfNameChords = new ArrayList<>();
-        listOfNameChords = changeIndexToNameChord(listOfIndexChords, listOfNameChords);
-
-
-
-        return listOfNameChords;
-
-    }
-
-
-    private List<String> changeIndexToNameChord(List<Integer> listOfIndexChords, List<String> listOfNameChords){
-
-        for (int i = 0; i < listOfIndexChords.size() ; i++) {
-
-            listOfNameChords.add(refTableNameChords.get(listOfIndexChords.get(i)));
-
-        }
-
-        return listOfNameChords;
-    }
-
-    private List<Integer> findListOfIndexChords(List<Integer> listOfIndexChords) {
-
-        for (int i = 0; i < bestBeatsForBestChordForAll32.size(); i += 32) {
-
-            PartOfSong partOfSong = bestBeatsForBestChordForAll32.get(i);
-            int bestBeatIndex = partOfSong.getBestIndexBeat();
-            Beat beat = partOfSong.get(bestBeatIndex);
-
-
-            int numberofPulses = 0;
-            int bestindex = 0;
-            for (int j = 0; j < beat.size() ; j++) {
-                PartOfBeat partOfBeat = beat.get(j);
-
-                bestindex = partOfBeat.getBestIndex();
-               numberofPulses = partOfBeat.getNumberOfPulses();
-
-            }
-
-            for (int j = 0; j < numberofPulses ; j++) {
-                listOfIndexChords.add(bestindex);
-            }
-        }
-
-        return listOfIndexChords;
-    }
-
-
-
-
-    private Song scoreOfAllBeatsAndItsBestsChordsforAllSong() throws IOException {
 
         getMapofChordBeat();
-
-        //Find score fore each pulse and all (50)chords
+        getMapofChordsForce();
         findScoreOfAllPulseAndAllChords();
 
-        int blockOf32 = (((piece.getPieceLenght16()/32))*32);
-
-        for (int i = 0; i < blockOf32; i += 32) {
-
-            bestBeatsForBestChordForAll32.add(scoreOfAllBeatsAndItsBestsChordsfor32(i));
-        }
-
-        return bestBeatsForBestChordForAll32;
+        findAllBeatChordsAllChordsAll32();
     }
 
-    private PartOfSong scoreOfAllBeatsAndItsBestsChordsfor32(int startPulse)  {
+    public AllBeatChordsAllChordsAll32 findAllBeatChordsAllChordsAll32() {
 
-        PartOfSong scoreOfAllBeatsAndItsBestsChords = new PartOfSong();
+            AllBeatChordsAllChordsAll32 allBeatChordsAllChordsAll32 = new AllBeatChordsAllChordsAll32();
+
+        for (int blockOf32 = 0; blockOf32 < (((piece.getPieceLenght16()/32))*32); blockOf32 += 32) {
+
+            allBeatChordsAllChordsAll32.put(blockOf32,findAllBeatChordsAllChordsOne32(blockOf32));
+        }
+
+        return allBeatChordsAllChordsAll32;
+    }
+
+    public AllBeatChordsAllChordsOne32 findAllBeatChordsAllChordsOne32(int startPulse)  {
+
+        AllBeatChordsAllChordsOne32 allBeatChordsAllChordsOne32 = new AllBeatChordsAllChordsOne32();
 
         for (int indexBeat = 0; indexBeat < refTableBeatsChords.size() ; indexBeat++) {//for each beats
 
-            //this contain One Beat and it's score.
-            scoreOfAllBeatsAndItsBestsChords.add(allPartOfOneBeatfor32(indexBeat, startPulse));
+            allBeatChordsAllChordsOne32.put(indexBeat,findFullBeatChordAllChordsOne32(indexBeat, startPulse));
         }
+            allBeatChordsAllChordsOne32.findTheBestIndex();
+            allBeatChordsAllChordsOne32.setStartPulse(startPulse);
 
-        //sum of all best score for all Beat
-        scoreOfAllBeatsAndItsBestsChords.findAndSetBestIndexBeat();
-
-        return scoreOfAllBeatsAndItsBestsChords;
+        return allBeatChordsAllChordsOne32;
 
     }
 
+    public FullBeatChordAllChordsOne32 findFullBeatChordAllChordsOne32(int indexBeat, int startPulse)  {
 
-
-    public Beat allPartOfOneBeatfor32(int indexBeat, int startPulse)  {
-
-        Beat allPartOfOneBeatAndItsBestsChords = new Beat();
+         FullBeatChordAllChordsOne32 fullBeatChordAllChordsOne32 = new FullBeatChordAllChordsOne32();
         int pulseDone =0;
-        for (int i = 0; i < refTableBeatsChords.get(indexBeat).size() ; i++) { //for each seq of beat
-            int numberOfPulse = refTableBeatsChords.get(indexBeat).get(i);
-            allPartOfOneBeatAndItsBestsChords.add(scoreOfOnePartOfOneBeatForALLChords(startPulse + pulseDone, numberOfPulse));
+        for (int indexPartOfBeat = 0; indexPartOfBeat < refTableBeatsChords.get(indexBeat).size() ; indexPartOfBeat++) { //for each seq of beat
+            int numberOfPulse = refTableBeatsChords.get(indexBeat).get(indexPartOfBeat);
+            fullBeatChordAllChordsOne32.put(indexPartOfBeat,findPartOfOneBeatChordAllChordsOne32(startPulse + pulseDone, numberOfPulse));
             pulseDone += numberOfPulse;
         }
 
-        allPartOfOneBeatAndItsBestsChords.setBestScore();
+        fullBeatChordAllChordsOne32.setScore();
+        fullBeatChordAllChordsOne32.setIndexBeat(indexBeat);
 
-        return allPartOfOneBeatAndItsBestsChords;
+        return fullBeatChordAllChordsOne32;
     }
 
-    private PartOfBeat scoreOfOnePartOfOneBeatForALLChords(int startPulse, int numberOfPulse)  {
+    public PartOfOneBeatChordAllChordsOne32 findPartOfOneBeatChordAllChordsOne32(int startPulse, int numberOfPulse)  {
 
-        PartOfBeat scoreOfOnePartOfOneBeatForALLChords = new PartOfBeat();
-        for (int indexChord = 0; indexChord < refTableNameChords.size() ; indexChord++) {//each force
-            //addOfXPulsesForOneChord and add to the forceSeqs
-            scoreOfOnePartOfOneBeatForALLChords.add(scoreOfOnePartOfOneBeatForOneChord(startPulse,numberOfPulse, indexChord));
+        PartOfOneBeatChordAllChordsOne32 partOfOneBeatChordAllChordsOne32 = new PartOfOneBeatChordAllChordsOne32();
+
+        for (int indexChord = 0; indexChord < refTableForceChords.size() ; indexChord++) {//each force
+
+            partOfOneBeatChordAllChordsOne32.put(indexChord,findPartOfOneBeatChordOneChordOne32(startPulse,numberOfPulse, indexChord));
         }
-        scoreOfOnePartOfOneBeatForALLChords.findMaxScoreAndSetTheIndexChord();
-        scoreOfOnePartOfOneBeatForALLChords.setNumberOfPulses(numberOfPulse);
 
-        return scoreOfOnePartOfOneBeatForALLChords;
+        partOfOneBeatChordAllChordsOne32.findTheBestIndex();
+        partOfOneBeatChordAllChordsOne32.setNumberOfPulse(numberOfPulse);
+        partOfOneBeatChordAllChordsOne32.setRefTableEChords(refTableEChords);
+
+        return partOfOneBeatChordAllChordsOne32;
     }
 
-    private double scoreOfOnePartOfOneBeatForOneChord(int startPulse,int numberOfPulse, int indexChord)  {
-        double scoreOfOnePartOfOneBeatForOneChord =0;
-        for (int k = 0; k < numberOfPulse ; k++) {
-            scoreOfOnePartOfOneBeatForOneChord += scoreOfEachPulseOfAllChords.get(startPulse + k).getScores().get(indexChord);
+    public PartOfOneBeatChordOneChordOne32 findPartOfOneBeatChordOneChordOne32(int startPulse,int numberOfPulse, int indexChord)  {
+
+        PartOfOneBeatChordOneChordOne32 partOfOneBeatChordOneChordOne32 = new PartOfOneBeatChordOneChordOne32();
+
+        double temp = 0;
+        for (int indexPulse = 0; indexPulse < numberOfPulse ; indexPulse++) {
+            temp += scoreOfEachPulseOfAllChords.get(startPulse + indexPulse).getScores().get(indexChord);
         }
-        return scoreOfOnePartOfOneBeatForOneChord;
+        partOfOneBeatChordOneChordOne32.setScore(temp);
+        partOfOneBeatChordOneChordOne32.setIndexeChord(indexChord);
+
+        return partOfOneBeatChordOneChordOne32;
     }
 
     public List<PulseChord> findScoreOfAllPulseAndAllChords()  {
@@ -180,14 +116,7 @@ public class ChordFinder {
 
         scoreOfEachPulseOfAllChords = new ArrayList<>();
 
-        //importe Table force chords for analyse.
-        try {
-            getMapofChordsForce("C:\\Users\\rapha\\IdeaProjects\\untitled5\\src\\ChordForce.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-          for (int pulseChord = 0; pulseChord < pieceMOD12.length ; pulseChord++) {
+       for (int pulseChord = 0; pulseChord < pieceMOD12.length ; pulseChord++) {
 
             scoreOfEachPulseOfAllChords.add(findScoreOfOnePulseAllChords(pulseChord));
         }
@@ -265,29 +194,19 @@ public class ChordFinder {
         return false;
     }
 
-    private void loadCompareDataTables() {
-
-
-        try {
-            getMapofChordStringToEChord("C:\\Users\\rapha\\IdeaProjects\\untitled5\\src\\ChordStringToDegre.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void getMapofChordsForce(String filePath) throws IOException {
+    public void getMapofChordsForce() throws IOException {
         BufferedReader br;
         String line;
 
-        refTableNameChords = new ArrayList<>();
+        refTableEChords = new ArrayList<>();
         refTableForceChords = new ArrayList<>();
 
-        br = new BufferedReader(new FileReader(filePath));
+        br = new BufferedReader(new FileReader(this.getClass().getClassLoader().getResource("ChordForce3.csv").getPath()));
         while ((line = br.readLine()) != null) {
 
             // use comma as separator
             String[] chord = line.split(";");
-            refTableNameChords.add(chord[0]);
+            refTableEChords.add(EChord.valueOf(chord[0]));
 
             List<Double> forceChord = new ArrayList<>();
             for (int i = 1; i < chord.length; i++) {
@@ -304,8 +223,8 @@ public class ChordFinder {
 
         refTableBeatsChords = new ArrayList<>();
         List<Integer> beats;
+        br = new BufferedReader(new FileReader(this.getClass().getClassLoader().getResource("ChordBeat.csv").getPath()));
 
-        br = new BufferedReader(new FileReader("C:\\Users\\rapha\\IdeaProjects\\untitled5\\src\\ChordBeat.csv"));
         while ((line = br.readLine()) != null) {
             // use comma as separator
             String[] beat = line.split(";");
@@ -321,24 +240,6 @@ public class ChordFinder {
             refTableBeatsChords.add(beats);
         }
     }
-
-    private void getMapofChordStringToEChord(String filePath) throws IOException {
-        BufferedReader br;
-        String line;
-
-        refTableNameToEchord = new HashMap<>();
-
-
-        br = new BufferedReader(new FileReader(filePath));
-        while ((line = br.readLine()) != null) {
-            // use comma as separator
-            String[] beat = line.split(";");
-
-            refTableNameToEchord.put(beat[0],EChord.valueOf(beat[1]));
-        }
-    }
-
-
 }
 
 

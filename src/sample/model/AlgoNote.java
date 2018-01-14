@@ -103,6 +103,8 @@ public  class AlgoNote {
         mapforceChords.put(EChord.VII, Arrays.asList(1, 99, 2, 99, 3, 4, 99, 5, 99, 6, 0, 99));
         mapforceChords.put(EChord.vii, Arrays.asList(1, 2, 99, 99, 3, 4, 99, 5, 99, 6, 0, 99));
 
+        mapforceChords.put(EChord.nothing, Arrays.asList(99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99));
+
 
         return mapforceChords;
     }

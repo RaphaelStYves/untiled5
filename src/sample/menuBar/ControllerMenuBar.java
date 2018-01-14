@@ -74,14 +74,22 @@ public class ControllerMenuBar {
             //save the path file for the next initialize.
             SaveFile(file.toString(), fileWithLastPath);
 
-                loadDataView(file);
+            loadDataView(file);
 
         }
+    }
+    public Piece createOldPiece(){
+         return oldPiece = new Piece();
+
+    }
+
+    public Piece createNewPiece(){
+        return newPiece = new Piece();
     }
 
     private void loadDataView(File file) throws MidiUnavailableException, InvalidMidiDataException, IOException {
         oldPiece.load(file);
-        newPiece.load(file);
+        newPiece .load(file);
         controllerNotes.loadAllComponants();
     }
 
@@ -99,15 +107,12 @@ public class ControllerMenuBar {
 
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param oldPiece
-     */
-    public void setPiece(Piece oldPiece, Piece newPiece) {
-        this.oldPiece = oldPiece;
-        this.newPiece = newPiece;
-    }
+//    public void setPiece(Piece oldPiece, Piece newPiece) {
+//        this.oldPiece = oldPiece;
+//        this.newPiece = newPiece;
+//    }
+//
+
 
 
 }

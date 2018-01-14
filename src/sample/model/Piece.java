@@ -58,7 +58,7 @@ public class Piece {
 
                     note.setChannel(sm.getChannel());
 
-                    if (sm.getCommand() == NOTE_ON) {
+                    if ((sm.getCommand() == NOTE_ON) || (sm.getData2() != 0) ) {
 
                         note.setIndex(i);
                         note.setOn(true);
@@ -75,36 +75,7 @@ public class Piece {
                         notes.add(note);
 
 
-                        if ( !pulses.containsKey(note.getPulse16())){
-
-                            Pulse pulse = new Pulse();
-
-                            pulses.put(note.getPulse16(), pulse);
-
-                        }else {
-
-                            Pulse pulse = pulses.get(note.getPulse16());
-                            pulse.addNote(note);
-
-                        }
-
-
-
-                        if ( !trackNumbers.containsKey(note.getTracknumber())){
-
-                            Tracknumber tracknumber = new Tracknumber();
-                            tracknumber.addNote(note);
-                            trackNumbers.put(note.getTracknumber(), tracknumber);
-
-                        }else {
-
-                            Tracknumber tracknumber = trackNumbers.get(note.getTracknumber());
-                            tracknumber.addNote(note);
-
-                        }
-
-
-                    } else if (sm.getCommand() == NOTE_OFF) {
+                    } else if ((sm.getCommand() == NOTE_OFF) || (sm.getData2() == 0) )  {
 
                         note.setIndex(i);
                         note.setOn(false);
@@ -126,11 +97,59 @@ public class Piece {
         findPieceLenght16();
 
         calculateLenght();
-        ChangeToFalse();
+        changeNoteWithVeloZeroToFalse();
+        removeNoteOff();
         initChords();
+
+        removeNotesWithNoLenght();
+
+        createPulsesList();
 
 
         return this;
+    }
+
+    private void removeNotesWithNoLenght() {
+
+        for (int i = 0; i < notes.size(); i++) {
+            if((notes.get(i).getOn() == true) && notes.get(i).getLenght16() == 0){
+                notes.remove(i);
+                        i -= 1;
+            }
+        }
+    }
+
+    private void removeNoteOff(){
+
+        for (int i = 0; i < notes.size(); i++) {
+            if((notes.get(i).getOn() == false)){
+                notes.remove(i);
+                i -= 1;
+            }
+        }
+
+    }
+
+    private void createPulsesList(){
+
+        for (int i = 0; i < notes.size(); i++) {
+
+            if ( !pulses.containsKey(notes.get(i).getPulse16())){
+
+                Pulse pulse = new Pulse();
+
+                pulses.put((notes.get(i).getPulse16()), pulse);
+                pulse.addNote((notes.get(i)));
+
+            }else {
+
+                Pulse pulse = pulses.get((notes.get(i).getPulse16()));
+                pulse.addNote(notes.get(i));
+
+            }
+
+        }
+
     }
 
     private void addCNotes() {
@@ -152,13 +171,15 @@ public class Piece {
 
 
 
-    private void ChangeToFalse() {
+    private void changeNoteWithVeloZeroToFalse() {
         for (int i = 0; i < notes.size(); i++) {
             if (notes.get(i).getVelocity() == 0) {
                 notes.get(i).setOn(false);
             }
         }
     }
+
+
 
     private void calculateLenght() {
 
@@ -394,5 +415,8 @@ public class Piece {
             this.pulse16 = (int)((pulse/((double)getResolution()/4))+.5);
         }
 
-    }
+       public int getInstrument() {
+           return instrument;
+       }
+   }
 }
