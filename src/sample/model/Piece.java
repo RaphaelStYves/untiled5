@@ -17,7 +17,10 @@ public class Piece {
     public List<Note> notes = new ArrayList<>();
     public ArrayList<Chord> chords = new ArrayList<>();
     public Map<Integer, Pulse> pulses = new HashMap<>();
-    public Map<Integer, Tracknumber> trackNumbers = new HashMap<>();
+    private Map<Integer, TrackModel> trackModel = new HashMap<>();
+
+    //VoiceFinder
+    private int voiceTrack; //base on a score pulse
 
 
     private static final int NOTE_ON = 0x90;
@@ -41,6 +44,7 @@ public class Piece {
         divisionType = sequence.getDivisionType();
 
 
+
         int trackNumber = 0;
         for (Track track : sequence.getTracks()) {
             trackNumber++;
@@ -57,6 +61,7 @@ public class Piece {
                     ShortMessage sm = (ShortMessage) message;
 
                     note.setChannel(sm.getChannel());
+
 
                     if ((sm.getCommand() == NOTE_ON) || (sm.getData2() != 0) ) {
 
@@ -104,6 +109,7 @@ public class Piece {
         removeNotesWithNoLenght();
 
         createPulsesList();
+        createTrackList();
 
 
         return this;
@@ -152,6 +158,28 @@ public class Piece {
 
     }
 
+    private void createTrackList(){
+
+        for (int i = 0; i < notes.size(); i++) {
+
+            if ( !trackModel.containsKey(notes.get(i).getTracknumber())){
+
+                TrackModel tracknumber = new TrackModel();
+
+                trackModel.put((notes.get(i).getTracknumber()), tracknumber);
+                tracknumber.addNote((notes.get(i)));
+
+            }else {
+
+                TrackModel tracknumber = trackModel.get((notes.get(i).getTracknumber()));
+                tracknumber.addNote(notes.get(i));
+
+            }
+
+        }
+
+
+    }
     private void addCNotes() {
         for (int i = 0; i < notes.size(); i++) {
            notes.get(i).setCNote(notes.get(i).getNote() + cTranspose);
@@ -296,7 +324,19 @@ public class Piece {
         return cTranspose;
     }
 
-   public class Chord {
+    public Map<Integer, TrackModel> getTrackNumbers() {
+        return trackModel;
+    }
+
+    public int getVoiceTrack() {
+        return voiceTrack;
+    }
+
+    public void setVoiceTrack(int voiceTrack) {
+        this.voiceTrack = voiceTrack;
+    }
+
+    public class Chord {
 
         private EChord chord;
 
@@ -418,5 +458,7 @@ public class Piece {
        public int getInstrument() {
            return instrument;
        }
+
+
    }
 }

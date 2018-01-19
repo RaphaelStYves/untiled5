@@ -25,20 +25,16 @@ import java.util.Map;
 public  class AlgoNote {
 
     public static int changenote(EChord origChord, EChord newChord, int note) {
-
         if (origChord == null){
             return  note;
         }
-
         if (newChord == null){
             return  note;
         }
-
         Map<EChord, List<Integer>> mapChord = compliteAllForceChords();
         int newNote = 0;
         int degre = 0;
         int ajuste;
-
 
         for (Map.Entry<EChord, List<Integer>> entry : mapChord.entrySet()) {
 
@@ -47,7 +43,6 @@ public  class AlgoNote {
                 break;
             }
         }
-
 
         for (Map.Entry<EChord, List<Integer>> entry : mapChord.entrySet()) {
 
@@ -67,13 +62,10 @@ public  class AlgoNote {
                         }else {
                             newNote = note - (12- ajuste);
                         }
-
-
                     }
                 }
             }
         }
-
         return newNote;
     }
 
@@ -108,6 +100,8 @@ public  class AlgoNote {
 
         return mapforceChords;
     }
+
+
 
 
 }

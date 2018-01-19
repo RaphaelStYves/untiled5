@@ -1,10 +1,10 @@
 package sample.midiSound;
 
-import javafx.scene.shape.Rectangle;
 import sample.model.Piece;
 import sample.notes.ControllerNotesBoard;
 
 import javax.sound.midi.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -22,29 +22,31 @@ public class SoundMidi  {
     public static final int END_OF_TRACK = 47;
 
     //Tempo track located at -1
-    private Map<Integer, Track> _tracks;
-    private Sequence sequence;
-    private Synthesizer synthesizer;
-    private Sequencer sequencer;
+    private Sequencer  seq;
+    private Transmitter seqTrans;
+    private Sequence    sequence;
+    private Receiver synthRcvr;
     private Piece piece;
     private ControllerNotesBoard controllerNotesBoard;
+    private MidiDevice device;
     int OFFSET =70; //synchronisation image with midiSound
 
     private int count = 0;
 
 
-    public SoundMidi(Piece piece, ControllerNotesBoard controllerNotesBoard) {
+    public SoundMidi(ControllerNotesBoard controllerNotesBoard) {
 
-        this.piece = piece;
         this.controllerNotesBoard = controllerNotesBoard;
-
     }
 
+    public void setPiece(Piece piece) {
+        this.piece = piece;
+    }
 
-    public void play() throws MidiUnavailableException, InvalidMidiDataException, IOException {
+    public void play() throws MidiUnavailableException, InvalidMidiDataException {
 
         //Create the sequence(midi)
-        Sequence sequence = new Sequence(piece.getDivisionType(), piece.getResolution());
+        sequence = new Sequence(piece.getDivisionType(), piece.getResolution());
         Track track = sequence.createTrack();
 
         for (int i = 0; i < piece.notes.size(); i++) {
@@ -60,10 +62,10 @@ public class SoundMidi  {
                 ShortMessage on = new ShortMessage();
                 on.setMessage(NOTE_ON, piece.notes.get(i).getChannel(), piece.notes.get(i).getCNote(), piece.notes.get(i).getVelocity());
                 track.add(new MidiEvent(on, piece.notes.get(i).getPulse16()*(piece.getResolution()/4)));
-            }else {
+
                 ShortMessage off = new ShortMessage();
                 off.setMessage(NOTE_OFF, piece.notes.get(i).getChannel(), piece.notes.get(i).getCNote(), 0);
-                track.add(new MidiEvent(off, piece.notes.get(i).getPulse16()*(piece.getResolution()/4)));
+                track.add(new MidiEvent(off, (piece.notes.get(i).getPulse16() + piece.notes.get(i).getLenght16())*(piece.getResolution()/4)));
             }
 
         }
@@ -73,45 +75,54 @@ public class SoundMidi  {
             MetaMessage t = new MetaMessage(127, new byte[6], 0);
             MidiEvent ev = new MidiEvent(t,(i*piece.getResolution()/4) + OFFSET);
             track.add(ev);
-
         }
 
-///////////////////////
+        MidiDevice device;
+        MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        device = MidiSystem.getMidiDevice(infos[4]);
 
-        sequencer = MidiSystem.getSequencer();
-        sequencer.open();
-        sequencer.setTempoInBPM(piece.getBpm());
+        if (!(device.isOpen())) {
+            try {
+                device.open();
+            } catch (MidiUnavailableException e) {
+            }
+        }
 
+        synthRcvr = device.getReceiver();
+        seq = MidiSystem.getSequencer();
+        seqTrans = seq.getTransmitter();
+        seqTrans.setReceiver(synthRcvr);
+        seq.open();
 
-
-        sequencer.addMetaEventListener(meta -> {
-
+        seq.addMetaEventListener(meta -> {
             count++;
             System.out.println(count);
-
             controllerNotesBoard.movingBar(count);
-
         });
 
-        Synthesizer synthesizer = MidiSystem.getSynthesizer();
-        synthesizer.open();
-
-        sequencer.setSequence(sequence);
-        sequencer.setTempoInBPM(piece.getBpm());
-
-
-        sequencer.getTransmitter();
-
-
-        sequencer.start();
-
+        seq.setSequence(sequence);
+        seq.setTempoInBPM(piece.getBpm());
+        seq.start();
     }
 
     public void stop(){
-        sequencer.stop();
+        seq.stop();
+    }
+
+    public void save(){
+        try {
+            String workingDir = System.getProperty("user.dir");
+            System.out.println("Current working directory : " + workingDir);
+            MidiSystem.write(sequence,1, new File("workingDir\\files\\midi.mid"));
+        } catch (IOException e) {
+        }
     }
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public void setDevice(MidiDevice device) {
+        this.device = device;
     }
 }

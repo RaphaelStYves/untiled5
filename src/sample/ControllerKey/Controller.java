@@ -1,12 +1,20 @@
 package sample.ControllerKey;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+import sample.VoiceFinder.VoiceFinder;
 import sample.chordBoard.ChordTile;
 import sample.chordBoard.ControllerChordBoard;
 import sample.chordFinder.ChordFinder;
 import sample.midiSound.SoundMidi;
 import sample.model.EChord;
 import sample.notes.ControllerNotesBoard;
+import sample.stageShortCut.ImgShortCut;
+
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
@@ -19,11 +27,13 @@ public class Controller {
     private ControllerChordBoard controllerChordBoard;
     private ControllerNotesBoard controllerNotesBoard;
 
+
     private boolean playing = false;
+    private boolean shortCutWindowisOpen = false;
 
 
 
-   public Scene setKeyController(Scene scene, ControllerChordBoard controllerChordBoard, ControllerNotesBoard controllerNotesBoard, SoundMidi soundMidi) {
+   public Scene setKeyController(Scene scene, ControllerChordBoard controllerChordBoard, ControllerNotesBoard controllerNotesBoard, SoundMidi soundMidi, VoiceFinder voiceFinder, ImgShortCut imgShortCut) {
 
        this.controllerChordBoard = controllerChordBoard;
        this.controllerNotesBoard = controllerNotesBoard;
@@ -71,12 +81,13 @@ public class Controller {
                 }
                 break;
 
-                case D: {
-                    controllerNotesBoard.deleteCanvas();
-                    System.out.println("You pressed 'D' to deleteCanvas");
-
+                case C: {
+                    imgShortCut.show();
+                    System.out.println("You pressed 'C' to show keyboard ShortCut");
                 }
                 break;
+
+
 
                 case SPACE: {
                     if(playing == false){
@@ -89,8 +100,6 @@ public class Controller {
                             e.printStackTrace();
                         } catch (InvalidMidiDataException e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                         System.out.println("You pressed 'Space Bar' to play midi");
                     }else {
@@ -100,6 +109,11 @@ public class Controller {
                         playing = false;
                         System.out.println("You pressed 'Space Bar' to stop midi");
                     }
+                }
+                break;
+                case S: {
+                    soundMidi.save();
+                    System.out.println("You pressed 'S' to save your song");
                 }
                 break;
 

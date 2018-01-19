@@ -41,7 +41,7 @@ public class FullBeatChordAllChordsOne32 {
         }
 
        double numbOfPartOfBeat =fullBeatChordAllChordsOne32Map.size();
-       double ajusting =  1+((9-numbOfPartOfBeat)/100);
+       double ajusting =  1+((6-numbOfPartOfBeat)/100);
 
 
         score = score * ajusting;
