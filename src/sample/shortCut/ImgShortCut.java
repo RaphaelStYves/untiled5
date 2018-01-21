@@ -1,4 +1,4 @@
-package sample.stageShortCut;
+package sample.shortCut;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,7 +17,7 @@ public class ImgShortCut {
 
         FXMLLoader loader;
         loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/sample/stageShortCut/imgShortCut.fxml"));
+        loader.setLocation(getClass().getResource("/sample/shortCut/imgShortCut.fxml"));
         try {
             root.setCenter(loader.load());
         } catch (IOException e) {

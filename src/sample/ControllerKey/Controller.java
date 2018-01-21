@@ -1,10 +1,6 @@
 package sample.ControllerKey;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 import sample.VoiceFinder.VoiceFinder;
 import sample.chordBoard.ChordTile;
@@ -13,7 +9,7 @@ import sample.chordFinder.ChordFinder;
 import sample.midiSound.SoundMidi;
 import sample.model.EChord;
 import sample.notes.ControllerNotesBoard;
-import sample.stageShortCut.ImgShortCut;
+import sample.shortCut.ImgShortCut;
 
 
 import javax.sound.midi.InvalidMidiDataException;

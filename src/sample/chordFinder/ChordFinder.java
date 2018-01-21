@@ -9,9 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.DoubleStream;
 
 public class ChordFinder {
@@ -201,7 +199,7 @@ public class ChordFinder {
         refTableEChords = new ArrayList<>();
         refTableForceChords = new ArrayList<>();
 
-        br = new BufferedReader(new FileReader(this.getClass().getClassLoader().getResource("ChordForce3.csv").getPath()));
+        br = new BufferedReader(new FileReader(this.getClass().getClassLoader().getResource("sample/chordFinder/ChordForce3.csv").getPath()));
         while ((line = br.readLine()) != null) {
 
             // use comma as separator
@@ -223,7 +221,7 @@ public class ChordFinder {
 
         refTableBeatsChords = new ArrayList<>();
         List<Integer> beats;
-        br = new BufferedReader(new FileReader(this.getClass().getClassLoader().getResource("ChordBeat.csv").getPath()));
+        br = new BufferedReader(new FileReader(this.getClass().getClassLoader().getResource("sample/chordFinder/ChordBeat.csv").getPath()));
 
         while ((line = br.readLine()) != null) {
             // use comma as separator

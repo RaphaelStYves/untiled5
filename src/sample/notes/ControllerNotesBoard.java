@@ -73,7 +73,6 @@ public class ControllerNotesBoard {
             gc.setGlobalAlpha(0.30);
             gc.fillRoundRect(0, ((int) (event.getY() / NOTEHEIGHT)) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
             System.out.println(event.getY() - NOTEHEIGHT / 2);
-
         });
 
 
@@ -119,40 +118,22 @@ public class ControllerNotesBoard {
     private Color selectTheColorTrack(int trackNumber) {
 
         switch (trackNumber) {
-            case 0:
-                return Color.BLUE;
-            case 1:
-                return Color.YELLOWGREEN;
-            case 2:
-                return Color.RED;
-            case 3:
-                return Color.GRAY;
-            case 4:
-                return Color.GREEN;
-            case 5:
-                return Color.BLUE;
-            case 6:
-                return Color.YELLOWGREEN;
-            case 7:
-                return Color.RED;
-            case 8:
-                return Color.GRAY;
-            case 9:
-                return Color.GREEN;
-            case 10:
-                return Color.BLUE;
-            case 11:
-                return Color.YELLOWGREEN;
-            case 12:
-                return Color.RED;
-            case 13:
-                return Color.GRAY;
-            case 14:
-                return Color.GREEN;
-            case 15:
-                return Color.GREEN;
-
-
+            case 0: return Color.BLUE;
+            case 1: return Color.YELLOWGREEN;
+            case 2: return Color.RED;
+            case 3: return Color.GRAY;
+            case 4: return Color.GREEN;
+            case 5: return Color.BLUE;
+            case 6: return Color.YELLOWGREEN;
+            case 7:  return Color.RED;
+            case 8: return Color.GRAY;
+            case 9:return Color.GREEN;
+            case 10: return Color.BLUE;
+            case 11:return Color.YELLOWGREEN;
+            case 12: return Color.RED;
+            case 13: return Color.GRAY;
+            case 14: return Color.GREEN;
+            case 15: return Color.GREEN;
         }
         return Color.BLUE;
     }
@@ -163,32 +144,18 @@ public class ControllerNotesBoard {
         int div = cnote / 12;
 
         switch (cnote % 12) {
-            case 0:
-                return div * 7 + 0;
-            case 1:
-                return div * 7 + 0;
-            case 2:
-                return div * 7 + 1;
-            case 3:
-                return div * 7 + 1;
-            case 4:
-                return div * 7 + 2;
-            case 5:
-                return div * 7 + 3;
-            case 6:
-                return div * 7 + 3;
-            case 7:
-                return div * 7 + 4;
-            case 8:
-                return div * 7 + 4;
-            case 9:
-                return div * 7 + 5;
-            case 10:
-                return div * 7 + 5;
-            case 11:
-                return div * 7 + 6;
-
-
+            case 0: return div * 7 + 0;
+            case 1: return div * 7 + 0;
+            case 2: return div * 7 + 1;
+            case 3:return div * 7 + 1;
+            case 4:return div * 7 + 2;
+            case 5: return div * 7 + 3;
+            case 6:return div * 7 + 3;
+            case 7:return div * 7 + 4;
+            case 8: return div * 7 + 4;
+            case 9: return div * 7 + 5;
+            case 10: return div * 7 + 5;
+            case 11: return div * 7 + 6;
         }
 
         return 13;
@@ -198,94 +165,60 @@ public class ControllerNotesBoard {
     private void createVerticalLine() {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.BLUE);
+        gc.setGlobalAlpha(0.20);
 
         for (int i = 0; i <= NBPULSEVISIBLE; i++) {
 
             if (i % 2 == 0) {
 
-                gc.setFill(Color.BLUE);
-                gc.setGlobalAlpha(0.20);
                 gc.fillRoundRect(i * NOTEWIDTH, 0, 3, ((NBNOTE + 1) * NOTEHEIGHT), 10, 10);
-
             }
-
             if (i % 16 == 0) {
 
-                gc.setFill(Color.BLUE);
-                gc.setGlobalAlpha(0.20);
                 gc.fillRoundRect(i * NOTEWIDTH, 0, 3, ((NBNOTE + 1) * NOTEHEIGHT), 10, 10);
-
-
             }
-
         }
-
     }
 
     public void createHorizontalLine() {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.BLUE);
+        gc.setGlobalAlpha(0.20);
 
         for (int i = 0; i <= NBNOTE; i++) {
 
             switch (i % 7) {
                 case 0:
-
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
                     gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
-
                     // gc.strokeText("C", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
-
                     break;
-
                 case 1:
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
                     gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
-
                     //gc.strokeText("D", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
-
                 case 2:
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
                     gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
 
                     // gc.strokeText("E", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
                 case 3:
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
                     gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
-
                     // gc.strokeText("F", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
-
                 case 4:
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
                     gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
-
                     // gc.strokeText("G", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
-
                 case 5:
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
-                    gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
-
+                       gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
                     // gc.strokeText("A", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
-
                 case 6:
-                    gc.setFill(Color.BLUE);
-                    gc.setGlobalAlpha(0.20);
                     gc.fillRoundRect(0, (NBNOTE - i) * NOTEHEIGHT, NOTEWIDTH * NBPULSEVISIBLE, NOTEHEIGHT, 10, 10);
-
                     //gc.strokeText("B", TXTAJUTX, (NBNOTE - i) * NOTEHEIGHT + TXTAJUTY);
                     break;
-
             }
 
 

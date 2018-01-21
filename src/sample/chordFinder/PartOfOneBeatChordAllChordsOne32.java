@@ -34,6 +34,7 @@ public class PartOfOneBeatChordAllChordsOne32 {
     }
 
     public double getScore() {
+
         return partOfOneBeatChordAllChordsOne32Map.get(bestIndexChord).getScore();
     }
 

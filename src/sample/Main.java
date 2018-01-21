@@ -10,12 +10,13 @@ import sample.ControllerKey.Controller;
 import sample.VoiceFinder.VoiceFinder;
 import sample.chordBoard.ControllerChordBoard;
 import sample.chordFinder.AllBeatChordsAllChordsOne32;
+import sample.chordFinder.ChordFinder;
 import sample.keyBoard.ControllerKeyBoard;
 import sample.menuBar.ControllerMenuBar;
 import sample.midiSound.SoundMidi;
 import sample.notes.ControllerNotesBoard;
 import sample.model.Piece;
-import sample.stageShortCut.ImgShortCut;
+import sample.shortCut.ImgShortCut;
 
 public class Main extends Application {
 
@@ -102,13 +103,14 @@ public Main(){
        primaryStage.show();
 
         //load the lastPiece
-       controllerMenuBar.loadLastPiece();
-       stage.setTitle(controllerMenuBar.getNameFile() + "    Number of track " + oldPiece.getTrackNumbers().size() + 1); //+1 because we start to zero
+      // controllerMenuBar.loadLastPiece();
+      // stage.setTitle(controllerMenuBar.getNameFile() + "    Number of track " + oldPiece.getTrackNumbers().size() + 1); //+1 because we start to zero
 
 
-       AllBeatChordsAllChordsOne32 allBeatChordsAllChordsOne32 = new AllBeatChordsAllChordsOne32();
-
-       controllernotesBoard.viewAllBeatChordsAllChordsAll32(allBeatChordsAllChordsOne32);
+//       ChordFinder chordFinder = new ChordFinder(newPiece);
+//       AllBeatChordsAllChordsOne32 allBeatChordsAllChordsOne32 = new AllBeatChordsAllChordsOne32();
+//       allBeatChordsAllChordsOne32 = chordFinder.findAllBeatChordsAllChordsOne32(0);
+//       controllernotesBoard.viewAllBeatChordsAllChordsAll32(allBeatChordsAllChordsOne32);
 
     }
 

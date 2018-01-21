@@ -34,8 +34,9 @@ public class ControllerMenuBar {
 
 
     String workingDir = System.getProperty("user.dir");
-    private File fileWithLastPath = new File(workingDir + "\\files\\lastfile.txt");
+    private File fileWithLastPath = new File(this.getClass().getResource("lastfile.txt").getPath());
     private String nameFile;
+    private File pathOftheLastPiece;
 
     @FXML
     private MenuBar menuBar;
@@ -45,6 +46,21 @@ public class ControllerMenuBar {
     private Menu filedevice;
 
 
+
+    ///////////////test//////////////////
+    @FXML
+    private void openRessourceFile() throws MidiUnavailableException, InvalidMidiDataException, IOException {
+        FileChooser fileChooser = new FileChooser();
+        File file2 = new File("MIDITimetoSayGoodbye.mid");
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource ("MIDITimetoSayGoodbye.mid").getFile());
+
+        nameFile = file.getName();
+        main.createPiece();
+        loadDataView(file);
+
+    }
+    //////////////test////////////////
 
     @FXML
     private void initialize() {
@@ -77,8 +93,9 @@ public class ControllerMenuBar {
 
     public void loadLastPiece() throws IOException, InvalidMidiDataException, MidiUnavailableException {
 
+
         String content = readFile(fileWithLastPath.toString(), Charset.defaultCharset());
-        File pathOftheLastPiece = new File(content);
+        pathOftheLastPiece = new File(content);
         loadDataView(pathOftheLastPiece);
         nameFile = pathOftheLastPiece.getName();
     }
@@ -115,11 +132,10 @@ public class ControllerMenuBar {
 
             //save the path file for the next initialize.
             SaveFile(file.toString(), fileWithLastPath);
-
-
-
+            nameFile = file.getName();
             main.createPiece();
             loadDataView(file);
+
 
         }
     }
